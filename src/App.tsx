@@ -10,15 +10,15 @@ import './styles/index.css';
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
+      <Router>
+        <Routes>
         {/* Main Route */}
-        <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
         
         {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
   );
 };
 

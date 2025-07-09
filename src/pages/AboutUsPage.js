@@ -1,5 +1,122 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+function ContactCTAForm() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setSubmitted(true);
+      setLoading(false);
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    }, 1500);
+  };
+
+  if (submitted) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 text-center max-w-md mx-auto">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-neutral-900 mb-2">Thank You!</h3>
+        <p className="text-neutral-600 mb-6">
+          Your message has been sent successfully. We'll get back to you as soon as possible.
+        </p>
+        <button
+          onClick={() => setSubmitted(false)}
+          className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+        >
+          Send Another Message
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto space-y-4">
+      <div>
+        <input
+          type="text"
+          name="name"
+          required
+          className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <input
+          type="email"
+          name="email"
+          required
+          className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <input
+          type="tel"
+          name="phone"
+          className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          placeholder="Phone Number"
+          value={formData.phone}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          name="subject"
+          required
+          className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          placeholder="Subject"
+          value={formData.subject}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <textarea
+          name="message"
+          rows={3}
+          required
+          className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          placeholder="Message"
+          value={formData.message}
+          onChange={handleChange}
+        ></textarea>
+      </div>
+      <div>
+        <button
+          type="submit"
+          className="w-full bg-primary-600 text-white font-medium py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+          disabled={loading}
+        >
+          {loading ? 'Sending...' : 'Send Message'}
+        </button>
+      </div>
+    </form>
+  );
+}
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -87,21 +204,6 @@ const AboutUsPage = () => {
               Contact
             </Link>
           </nav>
-
-          <div className="flex space-x-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="px-4 py-2 border border-primary-500 text-primary-600 rounded-md hover:bg-primary-50 transition-colors"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => navigate('/signup')}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-            >
-              Sign Up
-            </button>
-          </div>
         </div>
       </header>
 
@@ -257,12 +359,7 @@ const AboutUsPage = () => {
                 Start your journey with Novatrust Chits and Finance Private Ltd today and experience a modern, transparent approach to chit funds.
               </p>
               <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <button
-                  onClick={() => navigate('/signup')}
-                  className="px-8 py-3 bg-white text-primary-600 font-medium rounded-md hover:bg-neutral-100 transition-colors"
-                >
-                  Create Account
-                </button>
+                <ContactCTAForm />
                 <button
                   onClick={() => navigate('/schemes')}
                   className="px-8 py-3 border border-white text-white font-medium rounded-md hover:bg-primary-700 transition-colors"
