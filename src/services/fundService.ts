@@ -422,7 +422,7 @@ export const getUserFundBalance = async (userId: string, fundId: string) => {
     const netChitAmount = chitFundCalc.calculateNetChitAmount(totalAmount);
 
     // Check if user has won an auction
-    const wonAuction = auctions.find(a => a.winner_id === userId && a.status === 'completed');
+    const wonAuction = auctions?.find(a => a.winner_id === userId && a.status === 'completed');
     const hasWon = !!wonAuction;
     const winMonth = hasWon ? wonAuction.month_number : null;
     const bidAmount = hasWon ? (wonAuction.winning_bid || 0) : 0;
@@ -437,7 +437,7 @@ export const getUserFundBalance = async (userId: string, fundId: string) => {
     const netMonthlyPayments: number[] = [];
 
     for (let i = 1; i <= completedMonths; i++) {
-      const monthAuction = auctions.find(a => a.month_number === i && a.status === 'completed');
+      const monthAuction = auctions?.find(a => a.month_number === i && a.status === 'completed');
 
       if (monthAuction && monthAuction.winning_bid) {
         const dividend = chitFundCalc.calculateDividend(
@@ -514,8 +514,8 @@ export const getUserFundBalance = async (userId: string, fundId: string) => {
       prizeMoneyReceived,
       bidAmount,
       // Assume user will bid at average bid amount if they haven't won yet
-      !hasWon ? (auctions.filter(a => a.winning_bid).reduce((sum, a) => sum + (a.winning_bid || 0), 0) /
-                auctions.filter(a => a.winning_bid).length) : 0,
+      !hasWon ? (auctions?.filter(a => a.winning_bid).reduce((sum, a) => sum + (a.winning_bid || 0), 0) /
+                (auctions?.filter(a => a.winning_bid).length || 1)) : 0,
       // Assume user will win in the middle of remaining months if they haven't won yet
       !hasWon ? Math.round(completedMonths + (durationMonths - completedMonths) / 2) : 0
     );

@@ -71,7 +71,7 @@ const DashboardPage: React.FC = () => {
             if (paymentsSuccess && payments) {
               setPayments(payments);
             } else if (paymentsError) {
-              setError(paymentsError.message || 'Failed to fetch payments');
+              setError((paymentsError as any)?.message || 'Failed to fetch payments');
             }
 
             // Fetch detailed fund balance
@@ -81,11 +81,11 @@ const DashboardPage: React.FC = () => {
             if (balanceSuccess && balance) {
               setFundBalance(balance);
             } else if (balanceError) {
-              setError(balanceError.message || 'Failed to fetch fund balance');
+              setError((balanceError as any)?.message || 'Failed to fetch fund balance');
             }
           }
         } else if (error) {
-          setError(error.message || 'Failed to fetch chit funds');
+          setError((error as any)?.message || 'Failed to fetch chit funds');
         }
       } catch (err: any) {
         setError(err.message || 'An unexpected error occurred');
@@ -111,7 +111,7 @@ const DashboardPage: React.FC = () => {
       if (summarySuccess && summary) {
         setPaymentSummary(summary);
       } else if (summaryError) {
-        setError(summaryError.message || 'Failed to fetch payment summary');
+        setError((summaryError as any)?.message || 'Failed to fetch payment summary');
       }
 
       // Fetch payments for the selected fund
@@ -121,7 +121,7 @@ const DashboardPage: React.FC = () => {
       if (paymentsSuccess && payments) {
         setPayments(payments);
       } else if (paymentsError) {
-        setError(paymentsError.message || 'Failed to fetch payments');
+        setError((paymentsError as any)?.message || 'Failed to fetch payments');
       }
 
       // Fetch detailed fund balance
@@ -131,7 +131,7 @@ const DashboardPage: React.FC = () => {
       if (balanceSuccess && balance) {
         setFundBalance(balance);
       } else if (balanceError) {
-        setError(balanceError.message || 'Failed to fetch fund balance');
+        setError((balanceError as any)?.message || 'Failed to fetch fund balance');
       }
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred');

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import DashboardPage from './DashboardPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import AboutChitFundsPage from './pages/AboutChitFundsPage';
-import AboutUsPage from './pages/AboutUsPage';
-import SchemesPage from './pages/SchemesPage';
-import ContactPage from './pages/ContactPage';
-import TermsPage from './pages/TermsPage';
-import MaterialDashboardPage from './pages/MaterialDashboardPage';
-import KidsLoginPage from './pages/KidsLoginPage';
-import KidsDashboardPage from './pages/KidsDashboardPage';
+// import DashboardPage from './DashboardPage';
+// import LoginPage from './pages/LoginPage';
+// import SignupPage from './pages/SignupPage';
+// import AboutChitFundsPage from './pages/AboutChitFundsPage';
+// import AboutUsPage from './pages/AboutUsPage';
+// import SchemesPage from './pages/SchemesPage';
+// import ContactPage from './pages/ContactPage';
+// import TermsPage from './pages/TermsPage';
+// import MaterialDashboardPage from './pages/MaterialDashboardPage';
+// import KidsLoginPage from './pages/KidsLoginPage';
+// import KidsDashboardPage from './pages/KidsDashboardPage';
+import LandingPage from './pages/LandingPage';
 
 // Temporary placeholder component for testing
 const PlaceholderPage = () => {
@@ -72,17 +73,22 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/about-us" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/about-chit-funds" element={<AboutChitFundsPage />} />
-        <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/schemes" element={<SchemesPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/dashboard" element={<MaterialDashboardPage />} />
-        <Route path="/dashboard-classic" element={<DashboardPage />} />
-        <Route path="*" element={<Navigate to="/about-us" replace />} />
+        {/* Main Route - Single Page Website */}
+        <Route path="/" element={<LandingPage />} />
+        
+        {/* Commented out old routes - everything now in single page */}
+        {/* <Route path="/login" element={<LoginPage />} /> */}
+        {/* <Route path="/signup" element={<SignupPage />} /> */}
+        {/* <Route path="/about-chit-funds" element={<AboutChitFundsPage />} /> */}
+        {/* <Route path="/about-us" element={<AboutUsPage />} /> */}
+        {/* <Route path="/schemes" element={<SchemesPage />} /> */}
+        {/* <Route path="/contact" element={<ContactPage />} /> */}
+        {/* <Route path="/terms" element={<TermsPage />} /> */}
+        {/* <Route path="/dashboard" element={<MaterialDashboardPage />} /> */}
+        {/* <Route path="/dashboard-classic" element={<DashboardPage />} /> */}
+        
+        {/* Redirect all other routes to main page */}
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </Router>
   );
