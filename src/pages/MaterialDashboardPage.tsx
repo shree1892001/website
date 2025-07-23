@@ -75,11 +75,11 @@ const MaterialDashboardPage: React.FC = () => {
             if (balanceSuccess && balance) {
               setFundBalance(balance);
             } else if (balanceError) {
-              setError(balanceError.message || 'Failed to fetch fund balance');
+              setError((balanceError as any)?.message || 'Failed to fetch fund balance');
             }
           }
         } else if (error) {
-          setError(error.message || 'Failed to fetch chit funds');
+          setError((error as any)?.message || 'Failed to fetch chit funds');
         }
       } catch (err: any) {
         setError(err.message || 'An unexpected error occurred');
@@ -109,7 +109,7 @@ const MaterialDashboardPage: React.FC = () => {
         if (balanceSuccess && balance) {
           setFundBalance(balance);
         } else if (balanceError) {
-          setError(balanceError.message || 'Failed to fetch fund balance');
+          setError((balanceError as any)?.message || 'Failed to fetch fund balance');
         }
       } catch (err: any) {
         setError(err.message || 'An unexpected error occurred');

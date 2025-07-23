@@ -53,7 +53,7 @@ const schemes = [
 
 const features = [
   { icon: '💎', title: 'Transparent', desc: 'Clear, open process for all members.' },
-  { icon: '🤝', title: 'Trustworthy', desc: 'Trusted by thousands of happy customers.' },
+  { icon: '🤝', title: 'Trustworthy', desc: 'Your financial dreams, our trusted commitment.' },
   { icon: '📈', title: 'Growth', desc: 'Grow your savings with flexible plans.' },
   { icon: '🔒', title: 'Secure', desc: 'Your money is safe with us.' },
 ];
@@ -131,6 +131,7 @@ const LandingPage: React.FC = () => {
       description: "Premium chit fund auction for serious investors"
     }
   ]);
+  const [showTerms, setShowTerms] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -168,30 +169,63 @@ const LandingPage: React.FC = () => {
     const bidAmount = parseInt(formData.bidAmount) || 0;
     const winMonth = parseInt(formData.winMonth) || 0;
 
-    if (monthly && duration && bidAmount && winMonth) {
-      const totalFundValue = monthly * duration;
-      const totalInvestment = monthly * winMonth;
-      const netProfit = bidAmount - totalInvestment;
-      const roiPercentage = totalInvestment > 0 ? ((netProfit / totalInvestment) * 100).toFixed(2) : '0';
-      const monthlyDividend = totalFundValue > 0 ? Math.round((totalFundValue - bidAmount) / (duration - winMonth)) : 0;
-
-      setFormData({
-        ...formData,
-        totalFundValue: totalFundValue.toString(),
-        totalInvestment: totalInvestment.toString(),
-        netProfit: netProfit.toString(),
-        roiPercentage: roiPercentage,
-        monthlyDividend: monthlyDividend.toString()
-      });
+    // Validation
+    if (!monthly || !duration || !bidAmount || !winMonth) {
+      alert('Please fill in all fields with valid numbers');
+      return;
     }
+
+    if (winMonth > duration) {
+      alert('Win month cannot be greater than duration');
+      return;
+    }
+
+    if (bidAmount > monthly * duration) {
+      alert('Bid amount cannot be greater than total fund value');
+      return;
+    }
+
+    // Calculate values
+    const totalFundValue = monthly * duration;
+    const totalInvestment = monthly * winMonth;
+    const netProfit = bidAmount - totalInvestment;
+    const roiPercentage = totalInvestment > 0 ? ((netProfit / totalInvestment) * 100).toFixed(2) : '0';
+    const remainingMonths = duration - winMonth;
+    const monthlyDividend = remainingMonths > 0 ? Math.round((totalFundValue - bidAmount) / remainingMonths) : 0;
+
+    // Update form data with results
+    setFormData({
+      ...formData,
+      totalFundValue: totalFundValue.toLocaleString(),
+      totalInvestment: totalInvestment.toLocaleString(),
+      netProfit: netProfit.toLocaleString(),
+      roiPercentage: roiPercentage,
+      monthlyDividend: monthlyDividend.toLocaleString()
+    });
+
+    // Show success message
+    const message = `
+🎉 Calculation Complete!
+
+💰 Total Fund Value: ₹${totalFundValue.toLocaleString()}
+💸 Total Investment: ₹${totalInvestment.toLocaleString()}
+📊 Net Profit/Loss: ₹${netProfit.toLocaleString()}
+📈 ROI: ${roiPercentage}%
+🎁 Monthly Dividend: ₹${monthlyDividend.toLocaleString()}
+
+${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Consider adjusting your bid amount or win month.'}
+    `;
+    
+    alert(message);
   };
 
   // Enhanced Google Meet integration for live auction
   const joinLiveAuction = () => {
     if (formData.auctionEmail && formData.auctionDate && formData.auctionTime && formData.auctionName && formData.auctionPhone) {
-      // Generate unique Google Meet link
-      const meetCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-      const meetLink = `https://meet.google.com/novatrust-${meetCode}`;
+      // Generate valid Google Meet code: 3 groups of 4 lowercase letters
+      const randomGroup = () => Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 4);
+      const meetCode = `${randomGroup()}-${randomGroup()}-${randomGroup()}`;
+      const meetLink = `https://meet.google.com/${meetCode}`;
       
       // Create Google Calendar event (in production, this would use Google Calendar API)
       const eventTitle = `NovaTrust Live Auction - ${formData.auctionDate}`;
@@ -303,74 +337,74 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-purple-50 via-pink-50 via-rose-50 to-orange-50 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-gradient-to-r from-rose-400 to-orange-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
+  const handleShowTerms = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowTerms(true);
+    setTimeout(() => scrollToSection('terms'), 100); // ensure section is rendered before scroll
+  };
 
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-blue-50 via-cyan-50 via-emerald-50 to-teal-50 relative overflow-hidden pt-20">
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-xl shadow-2xl sticky top-0 z-50 border-b border-purple-200 relative">
+      <header className="bg-white/30 backdrop-blur-md shadow-2xl fixed top-0 left-0 right-0 z-50 border-b border-blue-200">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-lg opacity-30 animate-pulse"></div>
-              <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Logo" className="relative w-12 h-12 rounded-full object-cover shadow-xl ring-2 ring-purple-300 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full blur-lg opacity-30"></div>
+              <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Logo" className="relative w-12 h-12 rounded-full object-cover shadow-xl ring-2 ring-blue-300" />
             </div>
-            <h1 className="ml-3 text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent animate-pulse">NovaTrust Chits & Finance</h1>
+            <h1 className="ml-3 text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">NovaTrust Chits & Finance</h1>
           </div>
           <nav className="hidden md:flex space-x-8">
-            <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Home</button>
-            <button onClick={() => scrollToSection('about')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">About</button>
-            <button onClick={() => scrollToSection('schemes')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Schemes</button>
-            <button onClick={() => scrollToSection('calculator')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Calculator</button>
-            <button onClick={() => scrollToSection('auction')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Live Auction</button>
-            <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Why Us</button>
-            <button onClick={() => scrollToSection('terms')} className="text-gray-600 hover:text-purple-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Terms</button>
-            <button onClick={() => scrollToSection('contact')} className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white px-6 py-2 rounded-full font-medium hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-110 transform animate-pulse">Contact</button>
+            <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Home</button>
+            <button onClick={() => scrollToSection('about')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">About</button>
+            <button onClick={() => scrollToSection('schemes')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Schemes</button>
+            <button onClick={() => scrollToSection('calculator')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Calculator</button>
+            <button onClick={() => scrollToSection('auction')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Live Auction</button>
+            <button onClick={() => scrollToSection('benefits')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Benefits</button>
+            <button onClick={() => scrollToSection('why-invest')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Why Us</button>
+            <button onClick={() => scrollToSection('terms')} className="text-gray-600 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-110 transform hover:shadow-lg">Terms</button>
+            <button onClick={() => scrollToSection('contact')} className="bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white px-6 py-2 rounded-full font-medium hover:from-blue-700 hover:via-cyan-700 hover:to-emerald-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-110 transform animate-pulse">Contact</button>
           </nav>
+          {/* Mobile menu button */}
+          <button className="md:hidden text-gray-600 hover:text-blue-600 transition-colors duration-300">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section id="hero" className="bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 text-white py-20 md:py-32 relative overflow-hidden">
+      <section id="hero" className="bg-gradient-to-br from-blue-600 via-cyan-600 to-emerald-600 text-white py-20 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-rose-600/20"></div>
-        
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-20 text-4xl animate-float floating-delay-1">💎</div>
-        <div className="absolute top-40 right-32 text-3xl animate-float floating-delay-2">🚀</div>
-        <div className="absolute bottom-20 left-1/4 text-2xl animate-float floating-delay-3">⭐</div>
-        <div className="absolute top-1/2 right-20 text-3xl animate-rotate-slow">🎯</div>
-        
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-emerald-600/20"></div>
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
           <div className="md:w-1/2 mb-10 md:mb-0">
-            <div className="inline-block glass rounded-full px-6 py-2 mb-4 animate-bounce-slow neon-glow">
-              <span className="text-sm font-semibold sparkle">🚀 Most Trusted Chit Fund Platform</span>
+            <div className="inline-block glass rounded-full px-6 py-2 mb-4">
+              <span className="text-sm font-semibold">🚀 Most Trusted Chit Fund Platform</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight gradient-text-animate animate-pulse-strong">
-              NovaTrust Chit Fund Organization
+          
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">
+              NovaTrust Chits & Finance Private Limited
             </h1>
-            <p className="text-2xl mb-8 opacity-90 text-reveal">Your trusted partner for secure and transparent chit funds with live auctions!</p>
+            <p className="text-2xl mb-8 opacity-90">Your trusted partner for secure and transparent chit funds with live auctions!</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={() => scrollToSection('calculator')} className="rainbow-border btn-pulse">
-                <div className="bg-white text-purple-600 px-8 py-4 rounded-full font-bold shadow-xl hover:bg-purple-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl animate-pulse-strong">
-                  🧮 Try Calculator
+              <button onClick={() => scrollToSection('calculator')} className="rainbow-border">
+                <div className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold shadow-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                  Try Calculator
                 </div>
               </button>
-              <button onClick={() => scrollToSection('auction')} className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:from-pink-600 hover:to-rose-600 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl animate-pulse-strong neon-glow">
-                🎯 Join Live Auction
+              <button onClick={() => scrollToSection('auction')} className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:from-cyan-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                Join Live Auction
               </button>
+            </div>
+            <div className="mt-8 flex justify-center md:justify-start">
+            
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-rose-400 rounded-3xl blur-xl opacity-30 animate-pulse-strong"></div>
-              <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Chit Fund" className="relative w-full max-w-md rounded-3xl shadow-2xl object-cover transform hover:scale-105 transition-transform duration-300 ring-4 ring-white/20 animate-pulse-strong magnetic" />
-            </div>
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Finance" className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-blue-200" />
           </div>
         </div>
       </section>
@@ -378,12 +412,100 @@ const LandingPage: React.FC = () => {
       {/* About Section */}
       <section id="about" className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center max-w-4xl">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-6">Welcome to NovaTrust</h2>
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent mb-6">Welcome to NovaTrust</h2>
           <p className="text-xl text-gray-700 mb-8 leading-relaxed">NovaTrust Chits & Finance is committed to providing a safe, transparent, and rewarding chit fund experience. Our mission is to help you save, grow, and achieve your financial goals with ease and trust.</p>
-          <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 shadow-xl border border-purple-100">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="About Us" className="mx-auto w-32 h-32 object-cover rounded-full shadow-xl mb-6 ring-4 ring-purple-200" />
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-4">Trusted by Thousands</h3>
+          <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50 rounded-3xl p-8 shadow-xl border border-blue-100">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="About Us" className="mx-auto w-32 h-32 object-cover rounded-full shadow-xl mb-6 ring-4 ring-blue-200" />
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent mb-4">Empowering Your Financial Journey</h3>
             <p className="text-lg text-gray-600">Join our community of satisfied members who have achieved their financial dreams through our transparent chit fund schemes.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section id="benefits" className="py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-12 text-center">✨ Benefits of NovaTrust</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+            {/* Benefit Cards */}
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">💰</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">Lowest Intermediation Cost</h3>
+              <p className="text-gray-700 text-center text-sm">Cost of intermediation is the lowest in the industry, maximizing your returns.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">🏆</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">Tax Free Dividend</h3>
+              <p className="text-gray-700 text-center text-sm">Enjoy tax-free dividends on your chit fund investments.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">🚀</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">Easy Accessibility</h3>
+              <p className="text-gray-700 text-center text-sm">Access your funds and manage your investments with utmost ease.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">📈</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">No Interest Hikes</h3>
+              <p className="text-gray-700 text-center text-sm">No periodic interest hikes - your rates remain stable and predictable.</p>
+            </div>
+
+            
+
+            
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">⚡</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">Better Than Banks</h3>
+              <p className="text-gray-700 text-center text-sm">Chit funds are easier, simpler, faster and cheaper than bank borrowing.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Invest with Us Section */}
+      <section id="why-invest" className="py-20 bg-gradient-to-br from-emerald-50 via-cyan-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-12 text-center">🌟 Why Invest with Us?</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+            {/* Why Invest Cards */}
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">🕐</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Round-the-Clock Support</h3>
+              <p className="text-gray-700 text-center text-sm">Customers can obtain their payments at any time with round-the-clock services.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">📅</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Flexible Payments</h3>
+              <p className="text-gray-700 text-center text-sm">Pay your chit amount on daily , weekly basis or monthly basis as per your convenience.</p>
+            </div>
+ 
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">🛡️</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">100% Money Guarantee</h3>
+              <p className="text-gray-700 text-center text-sm">Complete guarantee for customers' money with full security.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">👁️</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Transparent Verification</h3>
+              <p className="text-gray-700 text-center text-sm">Internal customers can verify company payments to chit winners.</p>
+            </div>
+
+            
+
+            
+
+            <div className="bg-white rounded-3xl shadow-xl p-6 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group">
+              <div className="text-4xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">📝</div>
+              <h3 className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Hassle-Free Documentation</h3>
+              <p className="text-gray-700 text-center text-sm">Minimal documentation requirements for a smooth experience.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -402,47 +524,47 @@ const LandingPage: React.FC = () => {
                 <table className="min-w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-8 px-8 font-bold text-xl rounded-t-2xl shadow-lg">
+                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-4 md:py-8 px-4 md:px-8 font-bold text-lg md:text-xl rounded-t-2xl shadow-lg">
                         💰 MONTHLY SUBSCRIPTION
                       </th>
-                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-8 px-8 font-bold text-xl shadow-lg">
+                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-4 md:py-8 px-4 md:px-8 font-bold text-lg md:text-xl shadow-lg">
                         ⏰ DURATION (MONTHS)
                       </th>
-                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-8 px-8 font-bold text-xl rounded-t-2xl shadow-lg">
+                      <th className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white text-center py-4 md:py-8 px-4 md:px-8 font-bold text-lg md:text-xl rounded-t-2xl shadow-lg">
                         🎯 FUND VALUE
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="bg-gradient-to-r from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹5,000</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">20</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹1,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹5,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">20</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹1,00,000</td>
                     </tr>
                     <tr className="bg-white hover:bg-gradient-to-r hover:from-cyan-50 hover:to-emerald-50 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹8,000</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">25</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹2,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹8,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">25</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹2,00,000</td>
                     </tr>
                     <tr className="bg-gradient-to-r from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹10,000</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">30</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹3,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹10,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">30</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹3,00,000</td>
                     </tr>
                     <tr className="bg-white hover:bg-gradient-to-r hover:from-cyan-50 hover:to-emerald-50 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹12,500</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">40</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹5,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹12,500</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">40</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹5,00,000</td>
                     </tr>
                     <tr className="bg-gradient-to-r from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹20,000</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">25</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹5,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹20,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">25</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹5,00,000</td>
                     </tr>
                     <tr className="bg-white hover:bg-gradient-to-r hover:from-cyan-50 hover:to-emerald-50 transition-all duration-300 transform hover:scale-105">
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹20,000</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold text-gray-800">50</td>
-                      <td className="text-center py-8 px-8 text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹10,00,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">₹20,000</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold text-gray-800">50</td>
+                      <td className="text-center py-4 md:py-8 px-4 md:px-8 text-xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">₹10,00,000</td>
                     </tr>
                   </tbody>
                 </table>
@@ -451,7 +573,7 @@ const LandingPage: React.FC = () => {
           </div>
 
           {/* Scheme Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {schemes.map((scheme, idx) => (
               <div key={idx} className="bg-white rounded-3xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl border border-teal-100">
                 <div className="h-48 bg-gradient-to-br from-teal-400 via-cyan-400 to-emerald-400 relative">
@@ -465,7 +587,7 @@ const LandingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-6">
-                  <p className="text-gray-700 leading-relaxed">{scheme.description}</p>
+                <p className="text-gray-700 leading-relaxed">{scheme.description}</p>
                 </div>
               </div>
             ))}
@@ -474,26 +596,28 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Calculator Section */}
-      <section id="calculator" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
+      <section id="calculator" className="py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-12 text-center">🧮 Chit Fund Calculator</h2>
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent mb-12 text-center">🧮 Chit Fund Calculator</h2>
           
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-purple-100">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-blue-100">
               <div className="px-8 py-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                   {/* Input Section */}
                   <div className="space-y-6">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">📊 Enter Details</h3>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6">📊 Enter Details</h3>
                     
                     <div>
                       <label className="block text-gray-700 font-semibold mb-2">💰 Monthly Contribution (₹)</label>
                       <input 
                         type="number" 
+                        name="monthlyContribution"
                         value={formData.monthlyContribution || ''} 
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors text-lg"
                         placeholder="e.g., 5000"
+                        min="0"
                       />
                     </div>
                     
@@ -501,10 +625,13 @@ const LandingPage: React.FC = () => {
                       <label className="block text-gray-700 font-semibold mb-2">⏰ Duration (Months)</label>
                       <input 
                         type="number" 
+                        name="duration"
                         value={formData.duration || ''} 
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors text-lg"
                         placeholder="e.g., 20"
+                        min="1"
+                        max="100"
                       />
                     </div>
                     
@@ -512,10 +639,12 @@ const LandingPage: React.FC = () => {
                       <label className="block text-gray-700 font-semibold mb-2">🎯 Expected Bid Amount (₹)</label>
                       <input 
                         type="number" 
+                        name="bidAmount"
                         value={formData.bidAmount || ''} 
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors text-lg"
                         placeholder="e.g., 80000"
+                        min="0"
                       />
                     </div>
                     
@@ -523,16 +652,19 @@ const LandingPage: React.FC = () => {
                       <label className="block text-gray-700 font-semibold mb-2">📅 Month to Win Auction</label>
                       <input 
                         type="number" 
+                        name="winMonth"
                         value={formData.winMonth || ''} 
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors text-lg"
                         placeholder="e.g., 10"
+                        min="1"
+                        max="100"
                       />
                     </div>
                     
                     <button 
                       onClick={calculateChitFund}
-                      className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-pulse"
+                      className="w-full bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-pulse text-lg"
                     >
                       🧮 Calculate Returns
                     </button>
@@ -540,47 +672,87 @@ const LandingPage: React.FC = () => {
                   
                   {/* Results Section */}
                   <div className="space-y-6">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">📈 Results</h3>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6">📈 Results</h3>
                     
                     <div className="space-y-4">
-                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
-                        <div className="text-sm text-gray-600">Total Fund Value</div>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300">
+                        <div className="text-sm text-gray-600 mb-1">💰 Total Fund Value</div>
+                        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                           ₹{formData.totalFundValue || '0'}
                         </div>
                       </div>
                       
-                      <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded-xl border border-pink-200">
-                        <div className="text-sm text-gray-600">Total Investment</div>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                      <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 p-4 rounded-xl border border-cyan-200 hover:shadow-lg transition-all duration-300">
+                        <div className="text-sm text-gray-600 mb-1">💸 Total Investment</div>
+                        <div className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
                           ₹{formData.totalInvestment || '0'}
                         </div>
                       </div>
                       
-                      <div className="bg-gradient-to-r from-rose-50 to-purple-50 p-4 rounded-xl border border-rose-200">
-                        <div className="text-sm text-gray-600">Net Profit/Loss</div>
-                        <div className={`text-2xl font-bold ${parseInt(formData.netProfit || '0') >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-4 rounded-xl border border-emerald-200 hover:shadow-lg transition-all duration-300">
+                        <div className="text-sm text-gray-600 mb-1">📊 Net Profit/Loss</div>
+                        <div className={`text-2xl font-bold ${parseInt(formData.netProfit || '0') >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                           ₹{formData.netProfit || '0'}
                         </div>
                       </div>
                       
-                      <div className="bg-gradient-to-r from-purple-50 to-rose-50 p-4 rounded-xl border border-purple-200">
-                        <div className="text-sm text-gray-600">ROI Percentage</div>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-rose-600 bg-clip-text text-transparent">
+                      <div className="bg-gradient-to-r from-blue-50 to-emerald-50 p-4 rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300">
+                        <div className="text-sm text-gray-600 mb-1">📈 ROI Percentage</div>
+                        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
                           {formData.roiPercentage || '0'}%
                         </div>
                       </div>
                       
-                      <div className="bg-gradient-to-r from-rose-50 to-pink-50 p-4 rounded-xl border border-rose-200">
-                        <div className="text-sm text-gray-600">Monthly Dividend (if applicable)</div>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                      <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 p-4 rounded-xl border border-emerald-200 hover:shadow-lg transition-all duration-300">
+                        <div className="text-sm text-gray-600 mb-1">🎁 Monthly Dividend</div>
+                        <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
                           ₹{formData.monthlyDividend || '0'}
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Additional Info */}
+                    <div className="bg-gradient-to-r from-blue-50 to-emerald-50 p-4 rounded-xl border border-blue-200">
+                      <h4 className="font-bold text-gray-800 mb-2">💡 How it works:</h4>
+                      <ul className="text-gray-600 text-sm space-y-1">
+                        <li>• Total Fund Value = Monthly Contribution × Duration</li>
+                        <li>• Total Investment = Monthly Contribution × Win Month</li>
+                        <li>• Net Profit = Bid Amount - Total Investment</li>
+                        <li>• ROI = (Net Profit ÷ Total Investment) × 100</li>
+                        <li>• Monthly Dividend = (Total Fund Value - Bid Amount) ÷ Remaining Months</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Services Section */}
+      <section id="services" className="py-20 bg-gradient-to-br from-emerald-50 via-cyan-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-12 text-center">🚀 NovaTrust Loan Services</h2>
+          <p className="text-xl text-center text-gray-700 mb-10 max-w-2xl mx-auto">Unlock your dreams with our range of modern loan services, tailored for every stage of life. Fast, transparent, and customer-first!</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Home Loan & Mortgage Loan */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border border-emerald-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group flex flex-col items-center">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🏠</div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Home & Mortgage Loan</h3>
+              <p className="text-gray-700 text-center text-base">Make your dream home a reality with flexible, low-interest home and mortgage loans. Quick approval, minimal paperwork, and expert guidance every step of the way.</p>
+            </div>
+            {/* Car Loan */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border border-cyan-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group flex flex-col items-center">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🚗</div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-3 text-center">Car Loan</h3>
+              <p className="text-gray-700 text-center text-base">Drive your dreams with our easy and affordable car loans. Enjoy fast disbursal, attractive rates, and a hassle-free process for new or used vehicles.</p>
+            </div>
+            {/* Education Loan */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border border-blue-100 hover:scale-105 transition-all duration-300 hover:shadow-2xl group flex flex-col items-center">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🎓</div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-3 text-center">Education Loan</h3>
+              <p className="text-gray-700 text-center text-base">Invest in your future with our education loans. Cover tuition, living expenses, and more with flexible repayment options and expert support for students and parents.</p>
             </div>
           </div>
         </div>
@@ -594,7 +766,7 @@ const LandingPage: React.FC = () => {
           <div className="max-w-6xl mx-auto">
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-purple-100">
               <div className="px-8 py-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 xl:gap-8">
                   {/* Google Meet Integration */}
                   <div className="space-y-6">
                     <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">📹 Join Live Auction</h3>
@@ -709,7 +881,7 @@ const LandingPage: React.FC = () => {
                     {showNewAuctionForm && (
                       <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
                         <h4 className="font-bold text-gray-800 mb-4">🎯 Create New Auction</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                           <div>
                             <label className="block text-gray-700 font-semibold mb-2">📝 Auction Title *</label>
                             <input 
@@ -858,7 +1030,7 @@ const LandingPage: React.FC = () => {
       <section id="features" className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-12">Why Choose Us?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {features.map((f, idx) => (
               <div key={idx} className="bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 flex flex-col items-center transform hover:scale-105 transition-all duration-300 hover:shadow-2xl border border-purple-100">
                 <div className="text-6xl mb-6 transform hover:scale-110 transition-transform duration-300">{f.icon}</div>
@@ -871,97 +1043,71 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Terms and Conditions Section */}
-      <section id="terms" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-12 text-center">Terms and Conditions</h2>
-            
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-purple-100">
-              <div className="px-8 py-10">
-                <p className="font-bold text-lg text-gray-700 mb-8">Last Updated: {new Date().toLocaleDateString()}</p>
-
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-6">Novatrust Chits and Finance Private Ltd Rules</h3>
-
-                <div className="space-y-6">
-                  <ol className="list-decimal pl-6 space-y-3 text-gray-700 leading-relaxed">
-                    <li>To become a member or a guarantor in Novatrust Chits and Finance Private Ltd, one must be at least 20 years old.</li>
-                    <li>A person who wants to join the group must submit a photo, Aadhaar card, ration card, and PAN card, and can join by paying an advance amount of ₹1000.</li>
-                    <li>A member can hold any number of tickets in a single group.</li>
-                    <li>Members who join the chit group will be issued a registered Form No. 8 agreement for the chit value by Novatrust Chits and Finance Private Ltd, as per the 1982 Chit Fund Act.</li>
-                    <li>Before the group begins, Novatrust Chits and Finance Private Ltd provides a list of 20 individuals registered with the government to the group members through both online and offline methods.</li>
-                    <li>Novatrust Chits and Finance Private Ltd provides group members with a receipt for the fixed deposit made as collateral in the name of the group for its security, as per the Chit Fund Act, 1982.</li>
-                    <li>Novatrust Chits and Finance Private Ltd will operate the group only after providing the required security to the registrar and obtaining approval from the joint chit registrar.</li>
-                    <li>The installment amount must be paid one day before the chit date. Those who do so will be given a bonus ranging from ₹100 to ₹150.</li>
-                    <li>Members must collect a receipt immediately after paying their installment. If they claim to have paid without a receipt, the company will not be held responsible.</li>
-                    <li>If a chit group member wishes to receive the chit amount within six months, they must inform the company before joining the group. If they wish to receive it after seven months, they must give at least one month's prior notice.</li>
-                    <li>New members joining the chit group must have a minimum CIBIL score of 750.</li>
-                    <li>To receive the chit amount, two guarantors are required: (A) a Novatrust Chits and Finance Private Ltd chit group member and (B) a government employee. The documents of both the member and the guarantors must be of the same type.</li>
-                    <li>A member receiving the chit amount who provides the required deposit or registers a mortgage for the remaining months does not need to submit any additional documents or guarantees.</li>
-                    <li>Members who wish to receive the chit amount after 12 months must provide some form of guarantee. For those receiving it after 15 months, submitting their own documents will be sufficient.</li>
-                    <li>The member who is going to receive the chit amount can get the amount on the very next day after completing the required security procedures for the remaining monthly installments.</li>
-                    <li>Novatrust Chits and Finance Private Ltd members can avail insurance for their chit value. The premium will be 1% of the chit value, and this offer is applicable to individuals between 20 and 50 years of age.</li>
-                    <li>The foreman commission is 6% of the chit amount, and this commission is included in the monthly installment.</li>
-                    <li>Novatrust Chits and Finance Private Ltd charges commission on the chit value of individual members, but does not charge commission on the total amount of the chit group.</li>
-                    <li>The foreman commission and service charges cover the subscriber's investment security fee, government registration stamp duty, online service charges for daily and monthly installment payments, agreement fee for chit amount disbursement, and 24/7 website-based account statement maintenance service charges.</li>
-                    <li>Documents to be submitted by the auction winning customer: Proof of ID, Proof of Address, Proof of Income, Detailed documents of own house and 3 bank cheque for security will be mandatory. Also 2 guarantors will be required and their documents will be the same.</li>
-                    <li>If a member delays the payment of their pending chit installment within three days from the chit date, a 2% penalty must be paid. Similarly, if the delay extends to seven days, a 2% penalty or interest will be charged.</li>
-                    <li>If a member's cheque is bounced by the bank for any reason, a bounce charge of ₹500 will be collected.</li>
-                    <li>If a member keeps their chit installment pending for up to five days from the chit date, they will not be eligible to receive the chit amount for the next six months.</li>
-                    <li>If a member wishes to cancel their ticket and transfer it to a new subscriber, a 1% processing fee will be charged on the chit value.</li>
-                    <li>If a member cancels their ticket and later joins a new group, they will be eligible to receive the chit amount only after six months.</li>
-                    <li>As per the agreement between the company and the customer, if the chit installment remains unpaid for up to 15 days from the chit date, the company has the right to cancel the member's ticket without their consent.</li>
-                    <li>If a member cancels their ticket in a group, a 6% company commission will be deducted from the chit value, and the remaining amount will be given to the subscriber only after the chit group's term ends.</li>
-                    <li>As per the agreement, if a member who has taken the chit amount fails to pay the chit installments for two consecutive months, they will not be eligible to receive any rebate amount for the remaining monthly installments.</li>
-                    <li>If a member who has taken the chit amount fails to pay their pending dues for more than two months, legal action will be taken under the 1982 Chit Fund Act. The concerned subscriber and guarantors will be responsible for bearing all legal expenses.</li>
-                    <li>After the chit group ends, the subscriber can collect all their related documents.</li>
-                    <li>The company will not disclose any subscriber's transactions to any other person without the consent of the concerned subscriber.</li>
-                    <li>All guarantees accepted by the Novatrust Chits and Finance Private Ltd management must be in written form only.</li>
-                  </ol>
-
-                  <div className="mt-12">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-6">Benefits:</h3>
+      {showTerms && (
+        <section id="terms" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-12 text-center">Terms and Conditions</h2>
+              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-purple-100">
+                <div className="px-8 py-10">
+                  <p className="font-bold text-lg text-gray-700 mb-8">Last Updated: {new Date().toLocaleDateString()}</p>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-6">Novatrust Chits & Finance Private Ltd Rules</h3>
+                  <div className="space-y-6">
                     <ol className="list-decimal pl-6 space-y-3 text-gray-700 leading-relaxed">
-                      <li>Cost of intermediation is the lowest.</li>
-                      <li>Tax Free Dividend.</li>
-                      <li>Easy Accessibility.</li>
-                      <li>User-friendly service.</li>
-                      <li>No Periodic interest hikes.</li>
-                      <li>Exit Options with nominal charges.</li>
-                      <li>No any Tax Deducted from chit payment in our company.</li>
-                      <li>Our company charges commission on customer chit value but does not charge commission on the total amount of the chit group.</li>
-                      <li>Chit fund is much easier, simpler, faster and cheaper than borrowing from a bank.</li>
+                      <li>To become a member or a guarantor in Novatrust Chits & Finance Private Ltd, one must be at least 20 years old.</li>
+                      <li>A person who wants to join the group must submit a photo, Aadhaar card, ration card, and PAN card, and can join by paying an advance amount of ₹1000.</li>
+                      <li>A member can hold any number of tickets in a single group.</li>
+                      <li>Members who join the chit group will be issued a registered Form No. 8 agreement for the chit value by Novatrust Chits & Finance Private Ltd, as per the 1982 Chit Fund Act.</li>
+                      <li>Before the group begins, Novatrust Chits & Finance Private Ltd provides a list of 20 individuals registered with the government to the group members through both online and offline methods.</li>
+                      <li>Novatrust Chits & Finance Private Ltd provides group members with a receipt for the fixed deposit made as collateral in the name of the group for its security, as per the Chit Fund Act, 1982.</li>
+                      <li>Novatrust Chits & Finance Private Ltd will operate the group only after providing the required security to the registrar and obtaining approval from the joint chit registrar.</li>
+                      <li>The installment amount must be paid one day before the chit date. Those who do so will be given a bonus ranging from ₹100 to ₹150.</li>
+                      <li>Members must collect a receipt immediately after paying their installment. If they claim to have paid without a receipt, the company will not be held responsible.</li>
+                      <li>If a chit group member wishes to receive the chit amount within six months, they must inform the company before joining the group. If they wish to receive it after seven months, they must give at least one month's prior notice.</li>
+                      <li>New members joining the chit group must have a minimum CIBIL score of 550.</li>
+                      <li>To receive the chit amount, two guarantors are required: (A) a Novatrust Chits & Finance Private Ltd chit group member and (B) a government employee. The documents of both the member and the guarantors must be of the same type.</li>
+                      <li>A member receiving the chit amount who provides the required deposit or registers a mortgage for the remaining months does not need to submit any additional documents or guarantees.</li>
+                      <li>Members who wish to receive the chit amount after 12 months must provide some form of guarantee. For those receiving it after 15 months, submitting their own documents will be sufficient.</li>
+                      <li>The member who is going to receive the chit amount can get the amount on the very next day after completing the required security procedures for the remaining monthly installments.</li>
+                      <li>Novatrust Chits & Finance Private Ltd members can avail insurance for their chit value. The premium will be 1% of the chit value, and this offer is applicable to individuals between 20 and 50 years of age.</li>
+                      <li>The foreman commission is 5% of the chit amount, and this commission is included in the monthly installment.</li>
+                      <li>Novatrust Chits & Finance Private Ltd charges commission on the chit value of individual members, but does not charge commission on the total amount of the chit group.</li>
+                      <li>The foreman commission and service charges cover the subscriber's investment security fee, government registration stamp duty, online service charges for daily and monthly installment payments, agreement fee for chit amount disbursement, and 24/7 website-based account statement maintenance service charges.</li>
+                      <li>Documents to be submitted by the auction winning customer: Proof of ID, Proof of Address, Proof of Income, Detailed documents of own house and 3 bank cheque for security will be mandatory. Also 2 guarantors will be required and their documents will be the same.</li>
+                      <li>If a member delays the payment of their pending chit installment within  15 days from the chit date, a 3% penalty must be paid. Similarly, if the delay extends to next 1days, a 2% penalty or interest will be charged.</li>
+                      <li>If a member's cheque is bounced by the bank for any reason, a bounce charge of ₹500 will be collected.</li>
+                      <li>If a member keeps their chit installment pending for up to 30 days from the chit date, they will not be eligible to receive the chit amount for the next five months.</li>
+                      <li>If a member wishes to cancel their ticket and transfer it to a new subscriber, a 1% processing fee will be charged on the chit value.</li>
+                      <li>If a member cancels their ticket and later joins a new group, they will be eligible to receive the chit amount only after six months.</li>
+                      <li>As per the agreement between the company and the customer, if the chit installment remains unpaid for up to 30days from the chit date, the company has the right to cancel the member's ticket without their consent.</li>
+                      <li>As per the agreement, if a member who has taken the chit amount fails to pay the chit installments for two consecutive months, they will not be eligible to receive any rebate amount for the remaining monthly installments.</li>
+                      <li>If a member who has taken the chit amount fails to pay their pending dues for more than two months, legal action will be taken under the 1982 Chit Fund Act. The concerned subscriber and guarantors will be responsible for bearing all legal expenses.</li>
+                      <li>After the chit group ends, the subscriber can collect all their related documents.</li>
+                      <li>The company will not disclose any subscriber's transactions to any other person without the consent of the concerned subscriber.</li>
+                      <li>All guarantees accepted by the Novatrust Chits & Finance Private Ltd management must be in written form only.</li>
                     </ol>
                   </div>
-
-                  <div className="mt-12">
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-6">Why Invest with us?</h3>
-                    <ol className="list-decimal pl-6 space-y-3 text-gray-700 leading-relaxed">
-                      <li>Customer can obtain their payments at any time (24 X 7 services)</li>
-                      <li>Customer can pay their chit amount on daily / weekly basis.</li>
-                      <li>100 % guarantee for customers money.</li>
-                      <li>The internal customer of group can check whether the company has paid the amount of the chit winner.</li>
-                      <li>Online Chit Group Statements & Videos facilities</li>
-                      <li>Transparency through Registration.</li>
-                      <li>Customer can get 50% fund of their's chit paid amount with lowest interest.</li>
-                      <li>Hassle-free documentation.</li>
-                    </ol>
+                  <div className="text-center mt-8">
+                    <button onClick={() => setShowTerms(false)} className="text-blue-600 underline hover:text-emerald-600 font-semibold transition-colors duration-300">Hide Terms</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent mb-12 text-center">Contact Us</h2>
-          <div className="max-w-3xl mx-auto mb-12 text-center bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 shadow-xl border border-purple-100">
+          <div className="max-w-3xl mx-auto mb-12 text-center bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 shadow-xl border border-purple-100 flex flex-col items-center justify-center">
             <p className="text-2xl text-gray-700 mb-4 font-semibold">NovaTrust Chits & Finance Pvt Ltd</p>
-            <p className="text-lg text-gray-600 mb-2">123 Financial District, Hyderabad, Telangana 500032, India</p>
-            <p className="text-lg text-gray-600 mb-2">Phone: +91 40 1234 5678 | +91 9876 543210</p>
-            <p className="text-lg text-gray-600">Email: info@novatrust.com</p>
+            <div className="flex flex-col items-center space-y-2">
+              <p className="text-lg text-gray-600 flex items-center"><span className="mr-2">📞</span> <span className="font-bold">7755996577</span></p>
+              <p className="text-lg text-gray-600 flex items-center"><span className="mr-2">✉️</span> <span className="font-bold">info@novatrust.co.in</span></p>
+              <p className="text-lg text-gray-600 flex items-center"><span className="mr-2">📍</span> Survey No. 28/P, Plot No. 33, 21 Leaves, Flat No. 702, Chh. Sambhajinagar (Aurangabad) - 431 001</p>
+            </div>
           </div>
           <div className="max-w-xl mx-auto">
             {submitted ? (
@@ -977,27 +1123,31 @@ const LandingPage: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-3xl shadow-2xl p-8 border border-purple-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <input id="name" name="name" type="text" required className="w-full px-6 py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg transition-all duration-300" placeholder="Full Name" value={formData.name} onChange={handleChange} />
+                    <input id="name" name="name" type="text" required className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base sm:text-lg transition-all duration-300" placeholder="Full Name" value={formData.name} onChange={handleChange} />
                   </div>
                   <div>
-                    <input id="email" name="email" type="email" required className="w-full px-6 py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg transition-all duration-300" placeholder="Email Address" value={formData.email} onChange={handleChange} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <input id="phone" name="phone" type="tel" className="w-full px-6 py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg transition-all duration-300" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
-                  </div>
-                  <div>
-                    <input id="subject" name="subject" type="text" required className="w-full px-6 py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg transition-all duration-300" placeholder="Subject" value={formData.subject} onChange={handleChange} />
+                    <input id="email" name="email" type="email" required className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base sm:text-lg transition-all duration-300" placeholder="Email Address" value={formData.email} onChange={handleChange} />
                   </div>
                 </div>
-                <div>
-                  <textarea id="message" name="message" rows={6} required className="w-full px-6 py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg transition-all duration-300" placeholder="Your message" value={formData.message} onChange={handleChange}></textarea>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                      <div>
+                      <input id="phone" name="phone" type="tel" className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base sm:text-lg transition-all duration-300" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
+                    </div>
+                  <div>
+                      <input id="subject" name="subject" type="text" required className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base sm:text-lg transition-all duration-300" placeholder="Subject" value={formData.subject} onChange={handleChange} />
+                    </div>
+                  </div>
+                  <div>
+                    <textarea id="message" name="message" rows={6} required className="w-full px-4 sm:px-6 py-3 sm:py-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-base sm:text-lg transition-all duration-300" placeholder="Your message" value={formData.message} onChange={handleChange}></textarea>
                 </div>
                 <div>
                   <button type="submit" className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold py-4 px-6 rounded-xl hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 text-lg shadow-lg hover:shadow-xl" disabled={loading}>{loading ? 'Sending...' : 'Send Message'}</button>
+                </div>
+                {/* Terms link below submit button */}
+                <div className="text-center mt-4">
+                  <a href="#terms" className="text-blue-600 underline hover:text-emerald-600 font-semibold transition-colors duration-300" onClick={handleShowTerms}>Read Terms and Conditions</a>
                 </div>
               </form>
             )}
@@ -1012,7 +1162,7 @@ const LandingPage: React.FC = () => {
             <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Logo" className="w-10 h-10 rounded-full object-cover shadow-lg ring-2 ring-purple-300" />
             <span className="ml-3 text-xl font-bold">NovaTrust</span>
           </div>
-          <div className="flex space-x-8">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
             <button onClick={() => scrollToSection('about')} className="text-white hover:text-purple-200 transition-colors duration-300 font-semibold">About</button>
             <button onClick={() => scrollToSection('schemes')} className="text-white hover:text-purple-200 transition-colors duration-300 font-semibold">Schemes</button>
             <button onClick={() => scrollToSection('terms')} className="text-white hover:text-purple-200 transition-colors duration-300 font-semibold">Terms</button>
@@ -1020,7 +1170,7 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-purple-500 text-center">
-          <p className="text-white text-lg">&copy; {new Date().getFullYear()} Novatrust Chits and Finance Private Ltd. All rights reserved.</p>
+          <p className="text-white text-lg">&copy; {new Date().getFullYear()} Novatrust Chits & Finance Private Ltd. All rights reserved.</p>
         </div>
       </footer>
     </div>

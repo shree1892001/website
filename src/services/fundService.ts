@@ -514,8 +514,8 @@ export const getUserFundBalance = async (userId: string, fundId: string) => {
       prizeMoneyReceived,
       bidAmount,
       // Assume user will bid at average bid amount if they haven't won yet
-      !hasWon ? (auctions?.filter(a => a.winning_bid).reduce((sum, a) => sum + (a.winning_bid || 0), 0) /
-                (auctions?.filter(a => a.winning_bid).length || 1)) : 0,
+      !hasWon ? ((auctions?.filter(a => a.winning_bid) ?? []).reduce((sum, a) => sum + (a.winning_bid || 0), 0) /
+                ((auctions?.filter(a => a.winning_bid) ?? []).length || 1)) : 0,
       // Assume user will win in the middle of remaining months if they haven't won yet
       !hasWon ? Math.round(completedMonths + (durationMonths - completedMonths) / 2) : 0
     );

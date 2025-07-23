@@ -100,7 +100,7 @@ const OtpVerificationPage: React.FC = () => {
           });
         }, 2000);
       } else {
-        setError(error || 'Invalid OTP. Please try again.');
+        setError(typeof error === 'string' && error ? error : 'Invalid OTP. Please try again.');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during verification');
@@ -122,7 +122,7 @@ const OtpVerificationPage: React.FC = () => {
         setResendDisabled(true);
         setCountdown(60); // Disable resend for 60 seconds
       } else {
-        setError(error || 'Failed to resend OTP. Please try again.');
+        setError(typeof error === 'string' && error ? error : 'Failed to resend OTP. Please try again.');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred while resending OTP');

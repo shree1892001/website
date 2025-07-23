@@ -61,7 +61,7 @@ const DashboardPage: React.FC = () => {
             if (summarySuccess && summary) {
               setPaymentSummary(summary);
             } else if (summaryError) {
-              setError(summaryError.message || 'Failed to fetch payment summary');
+              setError((summaryError as any)?.message || 'Failed to fetch payment summary');
             }
 
             // Fetch payments for the selected fund

@@ -94,10 +94,10 @@ const SignupPage: React.FC = () => {
       if (success) {
         setStep(2); // Move to OTP verification step
       } else {
-        setErrors({ general: error.message || 'Failed to send OTP. Please try again.' });
+        setErrors({ general: (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') ? (error as any).message : 'Failed to send OTP. Please try again.' });
       }
     } catch (error: any) {
-      setErrors({ general: error.message || 'An unexpected error occurred' });
+      setErrors({ general: (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') ? (error as any).message : 'An unexpected error occurred' });
     } finally {
       setIsSubmitting(false);
     }
@@ -144,7 +144,7 @@ const SignupPage: React.FC = () => {
       if (success) {
         setErrors({ general: 'OTP has been resent to your email.' });
       } else {
-        setErrors({ general: error.message || 'Failed to resend OTP. Please try again.' });
+        setErrors({ general: (error && typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string') ? (error as any).message : 'Failed to resend OTP. Please try again.' });
       }
     } catch (error: any) {
       setErrors({ general: error.message || 'An unexpected error occurred' });
