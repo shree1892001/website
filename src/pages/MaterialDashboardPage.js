@@ -153,9 +153,7 @@ const MaterialDashboardPage = () => {
       <aside className={`bg-white shadow-md transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0 -ml-64'} md:ml-0`}>
         <div className="p-4 border-b border-neutral-200">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg">
-              NT
-            </div>
+            <img src="/nt-logo-2024.svg" alt="NovaTrust Logo" className="w-10 h-10 rounded-full bg-primary-500 object-cover" />
             <div className="ml-3">
               <h1 className="text-xl font-bold text-neutral-900">NovaTrust Chits &  Finance Private Ltd</h1>
               <p className="text-xs text-neutral-500">Chits and Finance Pvt Ltd</p>

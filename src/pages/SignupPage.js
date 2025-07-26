@@ -62,6 +62,7 @@ const SignupPage = () => {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-8">
             <div className="text-center mb-8">
+              <img src="/nt-logo-2024.svg" alt="NovaTrust Logo" className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-500 object-cover" />
               <h1 className="text-3xl font-bold text-primary-600 mb-2">NovaTrust Chits &  Finance Private Ltd</h1>
             </div>
             

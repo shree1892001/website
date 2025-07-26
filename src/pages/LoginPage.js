@@ -54,9 +54,7 @@ const LoginPage = () => {
         <div className="max-w-md w-full">
           <div className="mb-10">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-12 h-12 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold text-xl">
-                NT
-              </div>
+              <img src="/nt-logo-2024.svg" alt="NovaTrust Logo" className="w-12 h-12 rounded-full bg-primary-600 object-cover" />
               <h1 className="text-2xl font-bold text-neutral-900 ml-2">NovaTrust Chits &  Finance Private Ltd</h1>
 
             </div>

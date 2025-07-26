@@ -30,9 +30,7 @@ const PlaceholderPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700">
       <div className="material-card p-8 max-w-md w-full shadow-lg">
         <div className="text-center mb-6">
-          <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-600 text-3xl font-bold">NT</span>
-          </div>
+                      <img src="/nt-logo-2024.svg" alt="NovaTrust Logo" className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-100 object-cover" />
           <h1 className="text-2xl font-bold text-primary-600">NovaTrust Chit Fund</h1>
           <p className="text-sm text-primary-500">Secure • Transparent • Reliable</p>
         </div>

@@ -351,7 +351,31 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
           <div className="flex items-center">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full blur-lg opacity-30"></div>
-              <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Logo" className="relative w-12 h-12 rounded-full object-cover shadow-xl ring-2 ring-blue-300" />
+              <img 
+                src="/novatrust-final-logo.svg?v=12345" 
+                alt="NovaTrust Logo" 
+                className="relative w-12 h-12 rounded-full object-cover shadow-xl ring-2 ring-blue-300"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = target.nextSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+              <div className="relative w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 flex items-center justify-center text-white font-bold text-lg shadow-xl ring-2 ring-blue-300" style={{display: 'none'}}>
+                <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="32" cy="32" r="30" fill="url(#gradient)"/>
+                  <path d="M16 32 C16 24 22 20 28 20 C34 20 40 24 40 32 C40 40 34 44 28 44 C22 44 16 40 16 32 Z M48 32 C48 24 42 20 36 20 C30 20 24 24 24 32 C24 40 30 44 36 44 C42 44 48 40 48 32 Z" fill="#ffecd2" opacity="0.9"/>
+                  <path d="M32 32 Q36 28 40 32 Q44 36 40 40 Q36 44 32 40 Q28 36 32 32" fill="none" stroke="#ffd89b" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+                  <path d="M32 24 L36 32 L32 40 L28 32 Z" fill="#ffd89b" opacity="0.9"/>
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#667eea"/>
+                      <stop offset="100%" stop-color="#764ba2"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
             </div>
             <h1 className="ml-3 text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">NovaTrust Chits & Finance</h1>
           </div>
@@ -404,7 +428,7 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Finance" className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-blue-200" />
+            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1000&q=80" alt="NovaTrust Finance and Trust" className="rounded-3xl shadow-2xl w-full max-w-md object-cover border-4 border-blue-200" />
           </div>
         </div>
       </section>

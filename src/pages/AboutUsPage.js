@@ -184,9 +184,7 @@ const AboutUsPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg">
-              NT
-            </div>
+            <img src="/novatrust-final-logo.svg?v=12345" alt="NovaTrust Logo" className="w-10 h-10 rounded-full bg-primary-500 object-cover" />
             <h1 className="ml-3 text-xl font-bold text-neutral-900">Novatrust Chits and Finance Private Ltd</h1>
           </div>
 
@@ -244,8 +242,8 @@ const AboutUsPage = () => {
               </div>
               <div className="md:w-1/2 bg-primary-100 flex items-center justify-center p-8">
                 <img
-                  src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-                  alt="NovaTrust office"
+                  src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80"
+                  alt="NovaTrust modern business and trust"
                   className="rounded-lg shadow-md max-h-96 object-cover"
                 />
               </div>

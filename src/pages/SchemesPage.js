@@ -163,9 +163,7 @@ const SchemesPage = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg">
-              NT
-            </div>
+            <img src="/nt-logo-2024.svg" alt="NovaTrust Logo" className="w-10 h-10 rounded-full bg-primary-500 object-cover" />
             <h1 className="ml-3 text-xl font-bold text-neutral-900">Novatrust Chits and Finance Private Ltd</h1>
           </div>
 
