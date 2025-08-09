@@ -132,6 +132,7 @@ const LandingPage: React.FC = () => {
     }
   ]);
   const [showTerms, setShowTerms] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -352,9 +353,9 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full blur-lg opacity-30"></div>
               <img 
-                src="/novatrust-final-logo.svg?v=12345" 
+                src="/novatrust-golden-ornate-logo.svg" 
                 alt="NovaTrust Logo" 
-                className="relative w-12 h-12 rounded-full object-cover shadow-xl ring-2 ring-blue-300"
+                className="relative w-12 h-12 object-contain shadow-xl ring-2 ring-yellow-300"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -391,12 +392,77 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
             <button onClick={() => scrollToSection('contact')} className="bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white px-6 py-2 rounded-full font-medium hover:from-blue-700 hover:via-cyan-700 hover:to-emerald-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-110 transform animate-pulse">Contact</button>
           </nav>
           {/* Mobile menu button */}
-          <button className="md:hidden text-gray-600 hover:text-blue-600 transition-colors duration-300">
+          <button 
+            className="md:hidden text-gray-600 hover:text-blue-600 transition-colors duration-300"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
             </svg>
           </button>
         </div>
+        
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white/95 backdrop-blur-md border-b border-blue-200">
+            <div className="px-4 py-2 space-y-1">
+              <button 
+                onClick={() => { scrollToSection('hero'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => { scrollToSection('about'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => { scrollToSection('schemes'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Schemes
+              </button>
+              <button 
+                onClick={() => { scrollToSection('calculator'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Calculator
+              </button>
+              <button 
+                onClick={() => { scrollToSection('auction'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Live Auction
+              </button>
+              <button 
+                onClick={() => { scrollToSection('benefits'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Benefits
+              </button>
+              <button 
+                onClick={() => { scrollToSection('why-invest'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Why Us
+              </button>
+              <button 
+                onClick={() => { scrollToSection('terms'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 font-medium"
+              >
+                Terms
+              </button>
+              <button 
+                onClick={() => { scrollToSection('contact'); setMobileMenuOpen(false); }} 
+                className="block w-full text-left px-3 py-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 text-white rounded-lg font-medium transition-all duration-300 text-center"
+              >
+                Contact
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -1183,8 +1249,8 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
       <footer className="bg-gradient-to-r from-purple-700 via-pink-700 to-rose-700 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0 flex items-center">
-            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Logo" className="w-10 h-10 rounded-full object-cover shadow-lg ring-2 ring-purple-300" />
-            <span className="ml-3 text-xl font-bold">NovaTrust</span>
+            <img src="/novatrust-golden-ornate-logo.svg" alt="NovaTrust Logo" className="w-10 h-10 object-contain shadow-lg ring-2 ring-yellow-300" />
+            <span className="ml-3 text-xl font-bold">NovaTrust Chits & Finance</span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 md:gap-8">
             <button onClick={() => scrollToSection('about')} className="text-white hover:text-purple-200 transition-colors duration-300 font-semibold">About</button>
@@ -1194,7 +1260,7 @@ ${netProfit >= 0 ? '✅ This looks like a profitable investment!' : '⚠️ Cons
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-purple-500 text-center">
-          <p className="text-white text-lg">&copy; {new Date().getFullYear()} Novatrust Chits & Finance Private Ltd. All rights reserved.</p>
+          <p className="text-white text-lg">&copy; {new Date().getFullYear()} NovaTrust Chits & Finance Private Ltd. All rights reserved.</p>
         </div>
       </footer>
     </div>
