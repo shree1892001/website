@@ -18,7 +18,7 @@ A modern, responsive web application for managing chit funds with user authentic
 - Tailwind CSS
 - React Router
 - Chart.js
-- Supabase (for authentication and database)
+  
 
 ## Getting Started
 
